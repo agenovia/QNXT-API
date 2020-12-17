@@ -3,7 +3,7 @@ Python library for handling QNXT 8.70 APIs
 
 
 ## In-Progress
-CallTracking API
+- CallTracking API
 
 ## TODO
 - CarrierProgram API
@@ -25,3 +25,7 @@ CallTracking API
 - Sponsor API
 - SystemConfiguration API
 - UM API
+
+## DONE
+- AppealAndGrievance API
+- Benefit API
