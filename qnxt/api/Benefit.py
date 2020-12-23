@@ -4,9 +4,10 @@ from typing import Union
 import requests
 
 from qnxt.authentication import RequestHeader
-from qnxt.utils.dateutil import dateformat
+# from qnxt.utils.dateutil import dateformat
+# from qnxt.utils.clean_url import clean_url
 from qnxt.api.Response import Response
-
+from qnxt.utils import *
 
 class BenefitResource:
     """
@@ -25,12 +26,7 @@ class BenefitResource:
                  enrollid: str = None,
                  as_of: Union[date, datetime, str] = None
                  ):
-
-        if app_server.endswith('/'):
-            self.base_uri = f"{app_server[:-1]}{self.BASE_PATH}/{plan_id}/{benefit_id}"
-        else:
-            self.base_uri = f"{app_server}/{self.BASE_PATH}/{plan_id}/{benefit_id}"
-
+        self.base_uri = f"{clean_url.clean_url(app_server, self.BASE_PATH)}/{plan_id}/{benefit_id}"
         self.header_factory = header_factory
 
         # be mindful that only the get_details method uses takes in any parameters
@@ -38,23 +34,25 @@ class BenefitResource:
         self.enrollid = enrollid
         self.as_of = as_of
 
-    def get_benefit(self):
+    def get_benefit(self) -> Response:
         """According to the docs, this does not take any parameters"""
         uri = self.base_uri
         response = requests.get(uri, headers=self.header_factory())
         return Response(response)
 
-    def get_accumulator(self):
+    def get_accumulator(self) -> Response:
         """According to the docs, this does not take any parameters"""
-        uri = f"{self.base_uri}/accumulators"
+        endpoint = "accumulators"
+        uri = f"{self.base_uri}/{endpoint}"
         response = requests.get(uri, headers=self.header_factory())
         return Response(response)
 
-    def get_details(self, **kwargs):
+    def get_details(self, **kwargs) -> Response:
         """This is the only method for this class that takes in any parameters and is the only one affected by the
         'since' method and the enrollid and expand class parameters. The kwargs argument allows for setting parameters
         during call time"""
-        uri = f"{self.base_uri}/details"
+        endpoint = "details"
+        uri = f"{self.base_uri}/{endpoint}"
         params = {'enrollid': self.enrollid, 'expand': self.expand}
         params.update(kwargs)
         response = requests.get(uri, headers=self.header_factory(), params=params)
@@ -63,7 +61,7 @@ class BenefitResource:
     def since(self, as_of: Union[date, datetime, str]):
         """Pass either a datetime/date object or a string in ISO format to set the class' asOfDate parameter.
         This parameter only affects the get_details method"""
-        self.as_of = dateformat(as_of)
+        self.as_of = dateutil.dateformat(as_of)
 
 
 class BenefitPlan:
@@ -77,18 +75,14 @@ class BenefitPlan:
                  enroll_type: str = None,
                  as_of: Union[date, datetime, str] = None
                  ):
-        if app_server.endswith('/'):
-            self.base_uri = f"{app_server[:-1]}{self.BASE_PATH}/{plan_id}"
-        else:
-            self.base_uri = f"{app_server}/{self.BASE_PATH}/{plan_id}"
-
+        self.base_uri = f"{clean_url(app_server, self.BASE_PATH)}/{plan_id}"
         self.header_factory = header_factory
 
         self.expand = expand
         self.enroll_type = enroll_type
         self.as_of = as_of
 
-    def get_benefit_plan(self, **kwargs):
+    def get_benefit_plan(self, **kwargs) -> Response:
         """Takes in the optional parameter expand"""
         uri = self.base_uri
         params = {'expand': self.expand}
@@ -96,9 +90,10 @@ class BenefitPlan:
         response = requests.get(uri, headers=self.header_factory(), params=params)
         return Response(response)
 
-    def get_benefit_plan_details(self, **kwargs):
+    def get_benefit_plan_details(self, **kwargs) -> Response:
         """Takes in the optional parameters enrollType and asOfDate"""
-        uri = f"{self.base_uri}/details"
+        endpoint = "details"
+        uri = f"{self.base_uri}/{endpoint}"
         params = {'enrollType': self.enroll_type, 'asOfDate': self.as_of}
         params.update(kwargs)
         response = requests.get(uri, headers=self.header_factory())
@@ -107,4 +102,4 @@ class BenefitPlan:
     def since(self, as_of: Union[date, datetime, str]):
         """Pass either a datetime/date object or a string in ISO format to set the class' asOfDate parameter.
         This parameter only affects the get_details method"""
-        self.as_of = dateformat(as_of)
+        self.as_of = dateutil.dateformat(as_of)

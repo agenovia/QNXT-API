@@ -32,7 +32,7 @@ class Search:
     def __str__(self):
         pass
 
-    def get_details_by_id(self, detail_id, **kwargs):
+    def get_details_by_id(self, detail_id, **kwargs) -> Response:
         uri = self.base_uri
         params = {'skip': self.skip, 'take': self.take, 'orderBy': self.order_by, 'expand': self.expand}
         params.update(kwargs)
@@ -40,7 +40,7 @@ class Search:
         response = requests.get(uri, headers=self.header_factory(), params=params)
         return Response(response)
 
-    def get_details_by_type(self, detail_type, **kwargs):
+    def get_details_by_type(self, detail_type, **kwargs) -> Response:
         uri = self.base_uri
         params = {'skip': self.skip, 'take': self.take, 'orderBy': self.order_by, 'expand': self.expand}
         params.update(kwargs)
@@ -48,7 +48,7 @@ class Search:
         response = requests.get(uri, headers=self.header_factory(), params=params)
         return Response(response)
 
-    def get_details_by_status(self, statuses, **kwargs):
+    def get_details_by_status(self, statuses, **kwargs) -> Response:
         uri = self.base_uri
         params = {'skip': self.skip, 'take': self.take, 'orderBy': self.order_by, 'expand': self.expand}
         params.update(kwargs)
