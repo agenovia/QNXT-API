@@ -18,6 +18,7 @@ class RequestHeader:
         """
         self.thresh = thresh
         self.auth = auth
+        self.envid = envid
 
         if fqdn.endswith('/'):
             self.fqdn = fqdn[:-1]
