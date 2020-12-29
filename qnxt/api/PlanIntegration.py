@@ -11,6 +11,14 @@ class ApplicationLogs:
     BASE_PATH = r"QNXTApi/PlanIntegration"
 
     def __init__(self, app_server, header_factory):
+        """
+        Parameters
+        ----------
+        app_server: str, optional
+            This is the FQDN of the target QNXT app server
+        header_factory: qnxt.authentication.RequestHeader, required
+            This is a callable that generates the appropriate authentication headers for QNXT API requests
+        """
         self.base_uri = clean_url.clean_url(app_server, self.BASE_PATH)
         self.app_server = app_server
         self.header_factory = header_factory
@@ -104,6 +112,14 @@ class ProcessLogs:
     BASE_PATH = r'QNXTApi/PlanIntegration'
 
     def __init__(self, app_server: str, header_factory: RequestHeader):
+        """
+        Parameters
+        ----------
+        app_server: str, optional
+            This is the FQDN of the target QNXT app server
+        header_factory: qnxt.authentication.RequestHeader, required
+            This is a callable that generates the appropriate authentication headers for QNXT API requests
+        """
         self.base_uri = clean_url.clean_url(app_server, self.BASE_PATH)
         self.header_factory = header_factory
 
@@ -137,6 +153,14 @@ class ProcessLogDetails:
     BASE_PATH = r"QNXTApi/PlanIntegration"
 
     def __init__(self, app_server: str, header_factory: RequestHeader):
+        """
+        Parameters
+        ----------
+        app_server: str, optional
+            This is the FQDN of the target QNXT app server
+        header_factory: qnxt.authentication.RequestHeader, required
+            This is a callable that generates the appropriate authentication headers for QNXT API requests
+        """
         self.base_uri = f"{clean_url.clean_url(app_server, self.BASE_PATH)}"
         self.header_factory = header_factory
 
@@ -458,6 +482,14 @@ class ProcessLogHeaders:
     BASE_PATH = r"QNXTApi/PlanIntegration"
 
     def __init__(self, app_server: str, header_factory: RequestHeader):
+        """
+        Parameters
+        ----------
+        app_server: str, optional
+            This is the FQDN of the target QNXT app server
+        header_factory: qnxt.authentication.RequestHeader, required
+            This is a callable that generates the appropriate authentication headers for QNXT API requests
+        """
         self.base_uri = f"{clean_url.clean_url(app_server, self.BASE_PATH)}"
         self.header_factory = header_factory
 

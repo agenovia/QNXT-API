@@ -19,6 +19,14 @@ class COPCProviders:
     BASE_PATH = r"QNXTApi/Member"
 
     def __init__(self, app_server: str, header_factory: RequestHeader):
+        """
+        Parameters
+        ----------
+        app_server: str, optional
+            This is the FQDN of the target QNXT app server
+        header_factory: qnxt.authentication.RequestHeader, required
+            This is a callable that generates the appropriate authentication headers for QNXT API requests
+        """
         self.base_uri = f"{clean_url.clean_url(app_server, self.BASE_PATH)}"
         self.header_factory = header_factory
 
@@ -120,6 +128,14 @@ class EnrollmentAccumulators:
     BASE_PATH = r"QNXTApi/Member"
 
     def __init__(self, app_server: str, header_factory: RequestHeader):
+        """
+        Parameters
+        ----------
+        app_server: str, optional
+            This is the FQDN of the target QNXT app server
+        header_factory: qnxt.authentication.RequestHeader, required
+            This is a callable that generates the appropriate authentication headers for QNXT API requests
+        """
         self.base_uri = f"{clean_url.clean_url(app_server, self.BASE_PATH)}"
         self.header_factory = header_factory
 
