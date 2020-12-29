@@ -338,7 +338,3 @@ class CallResource:
         params = {'expand': expand}
         response = requests.get(uri, headers=self.header_factory(), params=params)
         return Response(response)
-
-
-if __name__ == '__main__':
-    help(CallResource.search_call_issues)
