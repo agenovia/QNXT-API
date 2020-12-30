@@ -9,59 +9,84 @@ from qnxt.authentication import RequestHeader
 from qnxt.api.Response import Response
 from qnxt.utils import *
 
+
 class BenefitResource:
     """
-    Get Accumulators
-    Get Benefit
-    Get Benefit Coverage Detail
+    Benefits are services that are included in a benefit plan. Each benefit is defined by cost share, copayments,
+    covered services, procedures, diagnostic codes, restrictions, limits, and service categories. The Benefit resource
+    provides access to stored values for benefits.
     """
-    BASE_PATH = r'QNXTApi/Benefit/benefits'
+    BASE_PATH = r'QNXTApi/Benefit'
 
     def __init__(self,
                  app_server: str,
                  header_factory: RequestHeader,
-                 plan_id: str,
-                 benefit_id: str,
-                 expand: str = None,
-                 enrollid: str = None,
-                 as_of: Union[date, datetime, str] = None
                  ):
-        self.base_uri = f"{clean_url.clean_url(app_server, self.BASE_PATH)}/{plan_id}/{benefit_id}"
+        self.base_uri = f"{clean_url.clean_url(app_server, self.BASE_PATH)}"
         self.header_factory = header_factory
 
-        # be mindful that only the get_details method uses takes in any parameters
-        self.expand = expand
-        self.enrollid = enrollid
-        self.as_of = as_of
+    def get_accumulators(self,
+                         plan_id,
+                         benefit_id
+                         ) -> Response:
+        """
+        This operation returns accumulators data such as AccumId, AccumType, and Description, based on the plan ID
+        and benefit ID passed in the endpoint.
 
-    def get_benefit(self) -> Response:
-        """According to the docs, this does not take any parameters"""
-        uri = self.base_uri
-        response = requests.get(uri, headers=self.header_factory())
-        return Response(response)
-
-    def get_accumulator(self) -> Response:
-        """According to the docs, this does not take any parameters"""
-        endpoint = "accumulators"
+        Returns
+        -------
+        response: qnxt.api.Response.Response
+            HTTP Response object with convenience methods for getting the response's overview, metadata and results in
+            the form of class properties
+        """
+        endpoint = f"benefits/{plan_id}/{benefit_id}/accumulators"
         uri = f"{self.base_uri}/{endpoint}"
         response = requests.get(uri, headers=self.header_factory())
         return Response(response)
 
-    def get_details(self, **kwargs) -> Response:
-        """This is the only method for this class that takes in any parameters and is the only one affected by the
-        'since' method and the enrollid and expand class parameters. The kwargs argument allows for setting parameters
-        during call time"""
-        endpoint = "details"
+    def get_benefit(self,
+                    plan_id: str,
+                    benefit_id: str,
+                    ) -> Response:
+        """
+        This operation returns benefit data, based on the plan ID and benefit ID passed in the endpoint.
+
+        Returns
+        -------
+        response: qnxt.api.Response.Response
+            HTTP Response object with convenience methods for getting the response's overview, metadata and results in
+            the form of class properties
+        """
+        endpoint = f"benefits/{plan_id}/{benefit_id}"
         uri = f"{self.base_uri}/{endpoint}"
-        params = {'enrollid': self.enrollid, 'expand': self.expand}
-        params.update(kwargs)
+        response = requests.get(uri, headers=self.header_factory())
+        return Response(response)
+
+    def get_coverage_details(self,
+                             plan_id: str,
+                             benefit_id: str,
+                             enroll_id: str = None,
+                             as_of: Union[date, datetime, str] = None,
+                             expand: str = None,
+                             ) -> Response:
+        """
+        This operation returns benefit data including limits and restrictions, based on the plan ID and benefit ID
+        passed in the endpoint.
+
+        Returns
+        -------
+        response: qnxt.api.Response.Response
+            HTTP Response object with convenience methods for getting the response's overview, metadata and results in
+            the form of class properties
+        """
+        endpoint = f"benefits/{plan_id}/{benefit_id}/details"
+        uri = f"{self.base_uri}/{endpoint}"
+        params = {'enrollId': enroll_id,
+                  'asOfDate': as_of,
+                  'expand': expand
+                  }
         response = requests.get(uri, headers=self.header_factory(), params=params)
         return Response(response)
-
-    def since(self, as_of: Union[date, datetime, str]):
-        """Pass either a datetime/date object or a string in ISO format to set the class' asOfDate parameter.
-        This parameter only affects the get_details method"""
-        self.as_of = dateutil.dateformat(as_of)
 
 
 class BenefitPlan:

@@ -3,7 +3,7 @@ Python library for handling QNXT 8.70 APIs
 
 
 ## In-Progress
-- CallTracking API
+- Member API
 
 ## TODO
 - CarrierProgram API
@@ -16,8 +16,6 @@ Python library for handling QNXT 8.70 APIs
 - Entity API
 - Interact API
 - MedicalCode API
-- Member API
-- PlanIntegration API
 - Provider API
 - QNXTAscServices API
 - Reference API
@@ -29,3 +27,5 @@ Python library for handling QNXT 8.70 APIs
 ## DONE
 - AppealAndGrievance API
 - Benefit API
+- CallTracking API
+- PlanIntegration API
