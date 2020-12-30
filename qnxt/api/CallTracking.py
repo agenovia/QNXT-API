@@ -8,9 +8,6 @@ from qnxt.authentication import RequestHeader
 from qnxt.utils import *
 
 
-# TODO need to add extensive docstrings for each API class
-
-
 class CallStatistics:
     """The Call Statistics resource stores statistics related to call records. The Call Statistics resource includes
     stored values for calls, including the year, month, and day they occurred."""

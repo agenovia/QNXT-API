@@ -42,3 +42,56 @@ class Response:
     @property
     def json(self) -> dict:
         return self._json
+
+    def _get_n_results(self, n: int, head: bool = True) -> list:
+        """Returns the first `n` items from the 'results' list if `head` is True, else return the last `n`
+
+        Parameters
+        ----------
+        n: int
+            The number of results to return
+        head: bool, optional
+            If True, then return the first `n` items of the 'results' list, else return the last `n`
+
+        Returns
+        -------
+        list
+
+        Raises
+        ------
+        AssertionError
+            `n` has to be greater than 0
+        """
+        assert (n > 0)
+        if head is True:
+            return self._json['results'][:n]
+        else:
+            return self._json['results'][-n:]
+
+    def head(self, n: int = 5) -> list:
+        """
+        Pretty prints the top `n` 'results' in the Response object and returns its list form
+
+        Parameters
+        ----------
+        n: int
+            The top `n` results to pretty print and return
+        """
+        __results = self._get_n_results(n)
+        pretty = json.dumps(__results, indent=4, sort_keys=True)
+        print(pretty)
+        return __results
+
+    def tail(self, n: int = 5) -> list:
+        """
+        Pretty prints the bottom `n` 'results' in the Response object and returns its list form
+
+        Parameters
+        ----------
+        n: int
+            The bottom `n` results to pretty print and return
+        """
+        __results = self._get_n_results(n, head=False)
+        pretty = json.dumps(__results, indent=4, sort_keys=True)
+        print(pretty)
+        return __results

@@ -40,6 +40,21 @@ class RequestHeader:
         auth_header = {"Authorization": f"{self.token['token_type']} {self.token['access_token']}"}
         return {**self.headers, **auth_header}
 
+    def __str__(self):
+        self.__call__()
+        msg = f"""
+        STS Server: {self.fqdn}
+        Authentication Type: {type(self.auth).__name__}
+        Authentication User: {self.auth.username}
+        Expiry Threshold: {self.thresh} seconds ({self.thresh/60.00} minutes)
+        Refreshes On: {self.token['refreshes_on']} ({round((self.expiry - time.time())/60, 0)} minutes)
+        Token: {self.token['access_token']}
+        """
+        return msg
+
+    def __repr__(self):
+        return f"RequestHeader(fqdn={self.fqdn}, envid={self.envid}, auth={type(self.auth)}, thresh={self.thresh})"
+
     def update_token(self):
         """Check for expiry based on the thresh value given to the constructor; if expired, then update the token with
         a new one"""

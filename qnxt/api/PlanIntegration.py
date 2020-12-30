@@ -1,9 +1,11 @@
-import requests
-from qnxt.authentication import RequestHeader
-from typing import Union
 from datetime import date, datetime
-from qnxt.utils import *
+from typing import Union
+
+import requests
+
 from qnxt.api.Response import Response
+from qnxt.authentication import RequestHeader
+from qnxt.utils import *
 
 
 class ApplicationLogs:
@@ -49,6 +51,8 @@ class ApplicationLogs:
             applicationLog.TimeStamp,
             Identifies the date and time of the QNXT error, based on the server time/location where the error occurred.
             The timestamp uses the Coordinated Universal Time (UTC) offset format.
+
+            The string must be in the form of YYYY-MM-DD
         utc_date_to: [date, datetime, str], optional
             applicationLog.TimeStamp,
             Identifies the date and time of the QNXT error, based on the server time/location where the error occurred.
@@ -596,7 +600,8 @@ class ProcessLogHeaders:
         Parameters
         ----------
         processlog_id: str, required
-            processlogheader.processlogid The identifier that represents the transaction at the file level.
+            processlogheader.processlogid
+            The identifier that represents the transaction at the file level.
             There will be one process log header ID for each fileforwardslashtransaction processed.
         processlogtype_id: str, required
             processlogheader.processlogtypeid
