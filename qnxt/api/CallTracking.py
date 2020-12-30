@@ -1,158 +1,337 @@
-import requests
-from qnxt.authentication import RequestHeader
-from typing import Union
 from datetime import date, datetime
-from qnxt.utils import *
+from typing import Union
+
+import requests
+
 from qnxt.api.Response import Response
-
-
-# TODO need to add extensive docstrings for each API class
+from qnxt.authentication import RequestHeader
+from qnxt.utils import *
 
 
 class CallStatistics:
+    """The Call Statistics resource stores statistics related to call records. The Call Statistics resource includes
+    stored values for calls, including the year, month, and day they occurred."""
+
     BASE_PATH = r'QNXTApi/CallTracking/stats/calls/dates/count'
 
-    def __init__(self,
-                 app_server: str,
-                 header_factory: RequestHeader,
-                 memid: str = None,
-                 provid: str = None,
-                 eligible_orgid: str = None,
-                 date_type: str = None,
-                 date_from: Union[date, datetime, str] = None,
-                 date_to: Union[date, datetime, str] = None,
-                 entity_state: str = None
-                 ):
+    def __init__(self, app_server: str, header_factory: RequestHeader):
+        """
+        Parameters
+        ----------
+        app_server: str, optional
+            This is the FQDN of the target QNXT app server
+        header_factory: qnxt.authentication.RequestHeader, required
+            This is a callable that generates the appropriate authentication headers for QNXT API requests
+        """
         self.base_uri = clean_url.clean_url(app_server, self.BASE_PATH)
         self.header_factory = header_factory
 
-        self.memid = memid
-        self.provid = provid
-        self.eligible_orgid = eligible_orgid
-        self.date_type = date_type
-        self.date_from = date_from
-        self.date_to = date_to
-        self.entity_state = entity_state
+    def get_call_count(self,
+                       memid: str = None,
+                       provid: str = None,
+                       eligible_orgid: str = None,
+                       date_type: str = None,
+                       date_from: Union[date, datetime, str] = None,
+                       date_to: Union[date, datetime, str] = None,
+                       entity_state: str = None
+                       ) -> Response:
+        """
+        This operation returns the number (total count) of calls in the last month, quarter, and year, based on the
+        data passed in the request.
 
-    def from_date(self, date_object):
-        self.date_from = dateutil.dateformat(date_object)
+        Parameters
+        ----------
+        memid: str, optional
+            calltrack.memid
+            The unique system identifier for the member.
+        provid: str, optional
+            callreasonclaim.callerid
+            Primary key of calltrack table.
+        eligible_orgid: str, optional
+            callreasonclaim.callerid
+            Primary key of calltrack table.
+        date_type: str, optional
+            The type of the date.
+        date_from: [date, datetime, str], optional
+            calltrack.calldate
+            The call date of the call tracking entry.
+        date_to: [date, datetime, str], optional
+            calltrack.calldate
+            The call date of the call tracking entry.
+        entity_state: str, optional
+            The state of the model object. Valid values include ByDefault, NewlyAdded, Modified, and Deleted.
 
-    def to_date(self, date_object):
-        self.date_to = dateutil.dateformat(date_object)
+        Returns
+        -------
+        response: qnxt.api.Response.Response
+            HTTP Response object with convenience methods for getting the response's overview, metadata and results in
+            the form of class properties
+        """
 
-    def get_statistics(self, **kwargs) -> Response:
         uri = self.base_uri
-        params = {'memid': self.memid,
-                  'provId': self.provid,
-                  'eligibleOrgId': self.eligible_orgid,
-                  'dateType': self.date_type,
-                  'dateFrom': self.date_from,
-                  'dateTo': self.date_to,
-                  'entityState': self.entity_state
+        params = {'memid': memid,
+                  'provId': provid,
+                  'eligibleOrgId': eligible_orgid,
+                  'dateType': date_type,
+                  'dateFrom': date_from,
+                  'dateTo': date_to,
+                  'entityState': entity_state
                   }
-        params.update(kwargs)
         response = requests.get(uri, headers=self.header_factory(), params=params)
         return Response(response)
 
 
 class CallResource:
+    """The Calls resource stores call records that include general, descriptive information about the call, and
+    detailed information about the specific healthcare-related issue. The Calls resource includes stored values for
+    dates, sources, assignments, submit methods, status, and identifiers such as call, claim, referral, member, and
+    provider IDs."""
+
     BASE_PATH = r'QNXTApi/CallTracking'
 
-    def __init__(self,
-                 app_server: str,
-                 header_factory: RequestHeader,
-                 memid: str = None,
-                 userid: str = None,
-                 callerid: str = None,
-                 managerid: str = None,
-                 provid: str = None,
-                 eligible_orgid: str = None,
-                 claimid: str = None,
-                 referralid: str = None,
-                 assigned_to_userid: str = None,
-                 status: str = None,
-                 callsourceid: str = None,
-                 submitmethod: str = None,
-                 calldate_from: Union[date, datetime, str] = None,
-                 calldate_to: Union[date, datetime, str] = None,
-                 access_group_control: str = None,
-                 skip: int = None,
-                 take: int = None,
-                 orderby: str = None,
-                 expand: str = None
-                 ):
+    def __init__(self, app_server: str, header_factory: RequestHeader):
+        """
+        Parameters
+        ----------
+        app_server: str, optional
+            This is the FQDN of the target QNXT app server
+        header_factory: qnxt.authentication.RequestHeader, required
+            This is a callable that generates the appropriate authentication headers for QNXT API requests
+        """
         self.base_uri = clean_url(app_server, self.BASE_PATH)
         self.header_factory = header_factory
 
-        self.memid = memid
-        self.userid = userid
-        self.callerid = callerid
-        self.managerid = managerid
-        self.provid = provid
-        self.eligible_orgid = eligible_orgid
-        self.claimid = claimid
-        self.referralid = referralid
-        self.assigned_to_userid = assigned_to_userid
-        self.status = status
-        self.callsourceid = callsourceid
-        self.submitmethod = submitmethod
-        self.calldate_from = calldate_from
-        self.calldate_to = calldate_to
-        self.access_group_control = access_group_control
-        self.skip = skip
-        self.take = take
-        self.orderby = orderby
-        self.expand = expand
+    def search_call_issues(self,
+                           memid: str = None,
+                           provid: str = None,
+                           eligible_orgid: str = None,
+                           claimid: str = None,
+                           referral_id: str = None,
+                           assigned_to_userid: str = None,
+                           status: str = None,
+                           callsource_id: str = None,
+                           submit_method: str = None,
+                           calldate_from: Union[date, datetime, str] = None,
+                           calldate_to: Union[date, datetime, str] = None,
+                           skip: int = None,
+                           take: int = None,
+                           order_by: str = None,
+                           expand: str = None
+                           ) -> Response:
+        """
+        This operation returns all issues associated with the calls based on the data passed in the request.
 
-    def search_call_issues(self, **kwargs) -> Response:
+        Parameters
+        ----------
+        memid: str, optional
+            calltrack.memid
+            The member ID in the calltrack record. This is the primary key of the member table.
+        provid: str, optional
+            calltrack.provId
+            The provider ID in the calltrack record. This is the primary key of the provider table.
+        eligible_orgid: str, optional
+            calltrack.eligibleorgid
+            The identifier for the eligibility organization. This is the primary key of the eligibilityorg table.
+        claimid: str, optional
+            callreasonclaim.claimid
+            The claim ID on the callreasonclaim record. This is the primary key of the claim table.
+        referral_id: str, optional
+            callreasonreferral.ReferralId
+            Primary key of the referal table.
+        assigned_to_userid: str, optional
+            callreason.userid
+            The identifier for the user who logged the call.
+        status: str, optional
+            callreason.status
+            The status of the callreason record.
+        callsource_id: str, optional
+            calltrack.callsourceid
+            The call source ID in the calltrack record. This is the primary key of the callsource table.
+        submit_method: str, optional
+            calltrack.SubmittalMethod
+            Indicates how the request was submitted (e.g., Email, Fax, Call, Walk-In, Letter, etc.).
+        calldate_from: [date, datetime, str], optional
+            calltrack.calldate
+            The date in the calltrack record. This is the primary key of the callsource table.
+        calldate_to: [date, datetime, str], optional
+            calltrack.calldate
+            The date in the calltrack record. This is the primary key of the callsource table.
+        skip: int, optional
+            The Skip value identifies the subset of query results by defining the number of records to bypass in the
+            query result set before paging begins.
+        take: int, optional
+            The Take value (also known as page size) identifies the subset of query results by defining the number of
+            records to return in the query result set.
+        order_by: str, optional
+            The OrderBy value specifies how to sort the query result set. Sort options (ascending, descending) can be
+            applied to one or more sortable columns, in any order.
+        expand: str, optional
+            The Expand value specifies which properties to include in the query result set for complex objects.
+
+        Returns
+        -------
+        response: qnxt.api.Response.Response
+            HTTP Response object with convenience methods for getting the response's overview, metadata and results in
+            the form of class properties
+        """
+
         endpoint = "callIssues/search"
         uri = f"{self.base_uri}/{endpoint}"
-        params = {'memId': self.memid,
-                  'provId': self.provid,
-                  'eligibleOrgId': self.eligible_orgid,
-                  'claimId': self.claimid,
-                  'referralId': self.referralid,
-                  'assignedToUserId': self.assigned_to_userid,
-                  'status': self.status,
-                  'callSourceId': self.callsourceid,
-                  'submitMethod': self.submitmethod,
-                  'callDateFrom': self.calldate_from,
-                  'callDateTo': self.calldate_to,
-                  'skip': self.skip,
-                  'take': self.take,
-                  'orderBy': self.orderby,
-                  'expand': self.expand,
+        params = {'memId': memid,
+                  'provId': provid,
+                  'eligibleOrgId': eligible_orgid,
+                  'claimId': claimid,
+                  'referralId': referral_id,
+                  'assignedToUserId': assigned_to_userid,
+                  'status': status,
+                  'callSourceId': callsource_id,
+                  'submitMethod': submit_method,
+                  'callDateFrom': calldate_from,
+                  'callDateTo': calldate_to,
+                  'skip': skip,
+                  'take': take,
+                  'orderBy': order_by,
+                  'expand': expand,
                   }
-        params.update(kwargs)
         response = requests.get(uri, headers=self.header_factory(), params=params)
         return Response(response)
 
-    def search_call_details(self, **kwargs) -> Response:
+    def search_call_details(self,
+                            callerid: str = None,
+                            memid: str = None,
+                            provid: str = None,
+                            eligible_orgid: str = None,
+                            managerid: str = None,
+                            calldate_from: Union[date, datetime, str] = None,
+                            calldate_to: Union[date, datetime, str] = None,
+                            status: str = None,
+                            userid: int = None,
+                            access_group_control: str = None,
+                            skip: int = None,
+                            take: int = None,
+                            order_by: str = None,
+                            expand: str = None
+                            ) -> Response:
+        """
+        This operation returns all calls, based on the data passed in the request.
+
+        Parameters
+        ----------
+        callerid: str, optional
+            calltrack.callerid
+            The unique identifier for the calltrack record. This is the primary key for the calltrack table.
+        memid: str, optional
+            calltrack.memid
+            The member ID in the calltrack record. This is the primary key of the member table.
+        provid: str, optional
+            calltrack.provId
+            The provider ID in the calltrack record. This is the primary key of the provider table.
+        eligible_orgid: str, optional
+            calltrack.eligibleorgid
+            The identifier for the eligibility organization. This is the primary key of the eligibilityorg table.
+        managerid: str, optional
+            calltrack.userId
+            The identifier for user to which the call is assigned to.
+        calldate_from: [date, datetime, str], optional
+            calltrack.calldate
+            The date in the calltrack record. This is the primary key of the callsource table.
+        calldate_to: [date, datetime, str], optional
+            calltrack.calldate
+            The date in the calltrack record. This is the primary key of the callsource table.
+        status: str, optional
+            callreason.status
+            The status of the callreason record.
+        userid: str, optional
+            calltrack.userId, callreason.userId
+            The ID of the user on the calltrack record and/or callissues record associated to the calltrack record.
+        access_group_control: str, optional
+            AccessGroupControl property - - Indicate whether to apply user access group logic to the search results. N
+            means no. Anything other than N means yes.
+        skip: int, optional
+            The Skip value identifies the subset of query results by defining the number of records to bypass in the
+            query result set before paging begins.
+        take: int, optional
+            The Take value (also known as page size) identifies the subset of query results by defining the number of
+            records to return in the query result set.
+        order_by: str, optional
+            The OrderBy value specifies how to sort the query result set. Sort options (ascending, descending) can be
+            applied to one or more sortable columns, in any order.
+        expand: str, optional
+            The Expand value specifies which properties to include in the query result set for complex objects.
+
+        Returns
+        -------
+        response: qnxt.api.Response.Response
+            HTTP Response object with convenience methods for getting the response's overview, metadata and results in
+            the form of class properties
+        """
+
         endpoint = 'calls/search'
         uri = f"{self.base_uri}/{endpoint}"
-        params = {'callerId': self.callerid,
-                  'memId': self.memid,
-                  'provId': self.provid,
-                  'eligibleOrgId': self.eligible_orgid,
-                  'managerId': self.managerid,
-                  'callDateFrom': self.calldate_from,
-                  'callDateTo': self.calldate_to,
-                  'status': self.status,
-                  'userId': self.userid,
-                  'accessGroupControl': self.access_group_control,
-                  'skip': self.skip,
-                  'take': self.take,
-                  'orderBy': self.orderby,
-                  'expand': self.expand
+        params = {'callerId': callerid,
+                  'memId': memid,
+                  'provId': provid,
+                  'eligibleOrgId': eligible_orgid,
+                  'managerId': managerid,
+                  'callDateFrom': calldate_from,
+                  'callDateTo': calldate_to,
+                  'status': status,
+                  'userId': userid,
+                  'accessGroupControl': access_group_control,
+                  'skip': skip,
+                  'take': take,
+                  'orderBy': order_by,
+                  'expand': expand
                   }
-        params.update(kwargs)
         response = requests.get(uri, headers=self.header_factory(), params=params)
         return Response(response)
 
-    def get_call_details(self):
-        # TODO
-        pass
+    def get_call_details(self, callerid: str, expand: str = None) -> Response:
+        """
+        This operation returns call issues, based on the caller ID passed in the endpoint.
 
-    def get_calls_by_callerid(self):
-        # TODO
-        pass
+        Parameters
+        ----------
+        callerid: str, required
+            callreason.callerid
+            The system-generated ID for the caller. This is the primary key for the callreason table.
+        expand: str, optional
+            The Expand value specifies which properties to include in the query result set for complex objects.
+
+        Returns
+        -------
+        response: qnxt.api.Response.Response
+            HTTP Response object with convenience methods for getting the response's overview, metadata and results in
+            the form of class properties
+        """
+
+        endpoint = f"calls/{callerid}/issues"
+        uri = f"{self.base_uri}/{endpoint}"
+        params = {'expand': expand}
+        response = requests.get(uri, headers=self.header_factory(), params=params)
+        return Response(response)
+
+    def get_calls_by_callerid(self, callerid: str, expand: str = None) -> Response:
+        """
+        This operation returns call details, based on the caller ID passed in the endpoint.
+
+        Parameters
+        ----------
+        callerid: str, required
+            callreason.callerid
+            The system-generated ID for the caller. This is the primary key for the callreason table.
+        expand: str, optional
+            The Expand value specifies which properties to include in the query result set for complex objects.
+
+        Returns
+        -------
+        response: qnxt.api.Response.Response
+            HTTP Response object with convenience methods for getting the response's overview, metadata and results in
+            the form of class properties
+        """
+
+        endpoint = f"calls/{callerid}"
+        uri = f"{self.base_uri}/{endpoint}"
+        params = {'expand': expand}
+        response = requests.get(uri, headers=self.header_factory(), params=params)
+        return Response(response)
