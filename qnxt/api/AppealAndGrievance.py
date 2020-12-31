@@ -3,6 +3,7 @@ import requests
 from qnxt.authentication import RequestHeader
 from qnxt.api.Response import Response
 
+forcing a linting error
 
 class Search:
     BASE_PATH = r'QNXTApi/AppealAndGrievance/agIncidents/search'
