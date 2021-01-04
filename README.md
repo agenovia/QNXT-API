@@ -1,3 +1,5 @@
+[![GitHub Super-Linter](https://github.com/agenovia/QNXT-API/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
+
 # QNXT-API
 Python library for handling QNXT 8.70 APIs
 
