@@ -33,6 +33,7 @@ class Search:
         pass
 
     def get_details_by_id(self, detail_id, **kwargs) -> Response:
+        """Placeholder doc"""
         uri = self.base_uri
         params = {'skip': self.skip, 'take': self.take, 'orderBy': self.order_by, 'expand': self.expand}
         params.update(kwargs)
