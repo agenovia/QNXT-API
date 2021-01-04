@@ -113,3 +113,11 @@ class Response:
         pretty = json.dumps(__results, indent=4, sort_keys=True)
         print(pretty)
         return __results
+
+    def top(self, n):
+        """Alias of head"""
+        return self.head(n)
+
+    def bottom(self, n):
+        """Alias of tail"""
+        return self.tail(n)
