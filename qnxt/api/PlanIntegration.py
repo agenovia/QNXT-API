@@ -280,7 +280,7 @@ class ProcessLogDetails:
                   'amount': amount,
                   'entityState': entity_state
                   }
-        response = requests.post(uri, headers=self.header_factory(), params=params)
+        response = requests.post(uri, headers=self.header_factory(), data=params)
         return Response(response)
 
     def update_process_logdetail(self,
@@ -381,7 +381,7 @@ class ProcessLogDetails:
                   'amount': amount,
                   'entityState': entity_state
                   }
-        response = requests.put(uri, headers=self.header_factory(), params=params)
+        response = requests.put(uri, headers=self.header_factory(), data=params)
         return Response(response)
 
     def create_process_state(self,
@@ -475,7 +475,7 @@ class ProcessLogDetails:
                   'executionTime': execution_time,
                   'entityState': entity_state,
                   }
-        response = requests.post(uri, headers=self.header_factory(), params=params)
+        response = requests.post(uri, headers=self.header_factory(), data=params)
         return Response(response)
 
 
@@ -573,7 +573,7 @@ class ProcessLogHeaders:
                   'xmlData': xml_data,
                   'entityState': entity_state,
                   }
-        response = requests.post(uri, headers=self.header_factory(), params=params)
+        response = requests.post(uri, headers=self.header_factory(), data=params)
         return Response(response)
 
     def update_process_log_header(self,
@@ -681,5 +681,5 @@ class ProcessLogHeaders:
                   'xmlData': xml_data,
                   'entityState': entity_state,
                   }
-        response = requests.put(uri, headers=self.header_factory(), params=params)
+        response = requests.put(uri, headers=self.header_factory(), data=params)
         return Response(response)

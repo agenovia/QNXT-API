@@ -1,5 +1,6 @@
 import json
 import logging
+import pandas as pd
 
 
 class Response:
@@ -32,30 +33,50 @@ class Response:
     def __repr__(self):
         return self.__str__()
 
+    class ResultWrapper:
+        def __init__(self, _json):
+            self._json = _json
+
+        def __repr__(self):
+            pretty = json.dumps(self._json, indent=4, sort_keys=True)
+            return pretty
+
+        def __str__(self):
+            print(self.__repr__())
+
+        def to_dataframe(self):
+            if not isinstance(self._json, list):
+                return pd.DataFrame([self._json])
+            return pd.DataFrame(self._json)
+
+        @property
+        def json(self):
+            return self._json
+
     @property
-    def metadata(self) -> dict:
+    def metadata(self):
         """Returns a dictionary of the metadata section of the `http_response`"""
         try:
-            return self._json['processMetadata']
+            return self.ResultWrapper(self._json['processMetadata'])
         except KeyError as e:
             print(self.__str__(), 'Exception encountered in attempting to extract metadata from HTTP response')
             logging.exception(e, exc_info=True)
 
     @property
-    def results(self) -> dict:
+    def results(self):
         """Returns a dictionary of the results section of the `http_response`"""
         try:
-            return self._json['results']
+            return self.ResultWrapper(self._json['results'])
         except KeyError as e:
             print(self.__str__(), 'Exception encountered in attempting to extract results from HTTP response')
             logging.exception(e, exc_info=True)
 
     @property
-    def overview(self) -> dict:
+    def overview(self):
         """Returns a dictionary of the top-level overview of the `http_response`"""
         try:
             d = {k: v for k, v in self._json.items() if k not in ['results', 'processMetadata']}
-            return d
+            return self.ResultWrapper(d)
         except KeyError as e:
             print(self.__str__(), 'Exception encountered in attempting to extract results from HTTP response')
             logging.exception(e, exc_info=True)
@@ -86,7 +107,7 @@ class Response:
         else:
             return self._json['results'][-n:]
 
-    def head(self, n: int = 5) -> list:
+    def head(self, n: int = 5):
         """
         Pretty prints the top `n` 'results' in the Response object and returns its list form
 
@@ -96,11 +117,9 @@ class Response:
             The top `n` results to pretty print and return
         """
         __results = self._get_n_results(n)
-        pretty = json.dumps(__results, indent=4, sort_keys=True)
-        print(pretty)
-        return __results
+        return self.ResultWrapper(__results)
 
-    def tail(self, n: int = 5) -> list:
+    def tail(self, n: int = 5):
         """
         Pretty prints the bottom `n` 'results' in the Response object and returns its list form
 
@@ -110,9 +129,7 @@ class Response:
             The bottom `n` results to pretty print and return
         """
         __results = self._get_n_results(n, head=False)
-        pretty = json.dumps(__results, indent=4, sort_keys=True)
-        print(pretty)
-        return __results
+        return self.ResultWrapper(__results)
 
     def top(self, n):
         """Alias of head"""

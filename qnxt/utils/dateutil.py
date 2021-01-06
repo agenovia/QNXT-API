@@ -9,7 +9,7 @@ def dateformat(as_of: Union[date, datetime, str]) -> str:
     Parameters
     ----------
     as_of: [date, datetime, str], required
-        A date, datetime or str object representing a date
+        A date, datetime or str object representing a YYYY-MM-DD formatted string.
 
     Returns
     -------

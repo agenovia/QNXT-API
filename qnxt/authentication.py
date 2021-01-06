@@ -105,3 +105,7 @@ def basic_authentication(username, password):
 def windows_authentication(username, password, *args, **kwargs):
     """Returns an HttpNtlmAuth object that can be used to pass to RequestHeader"""
     return HttpNtlmAuth(username, password, *args, **kwargs)
+
+
+if __name__ == '__main__':
+    pass
